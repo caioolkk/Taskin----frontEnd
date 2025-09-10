@@ -83,7 +83,6 @@
         h2 { font-size: 2rem; margin-bottom: 16px; }
         h3 { font-size: 1.5rem; margin-bottom: 12px; }
         p { margin-bottom: 16px; font-size: 16px; }
-        
         /* HEADER - NOVO SISTEMA */
         header {
             background: white;
@@ -106,7 +105,6 @@
             font-size: 1.5rem;
             color: #48bb78;
         }
-        
         /* MENU DESKTOP - SEMPRE VISÍVEL PARA PÁGINAS PÚBLICAS */
         .desktop-menu {
             display: flex;
@@ -119,7 +117,6 @@
         .desktop-menu a:hover {
             color: #48bb78;
         }
-        
         /* MENU MOBILE - APENAS PARA USUÁRIOS LOGADOS */
         .mobile-menu-btn {
             display: none;
@@ -129,7 +126,6 @@
             cursor: pointer;
             color: #2d3748;
         }
-        
         /* MENU LATERAL MOBILE */
         .mobile-menu {
             position: fixed;
@@ -172,7 +168,6 @@
         .mobile-menu-item:hover {
             color: #48bb78;
         }
-        
         /* OVERLAY PARA MENU MOBILE */
         .menu-overlay {
             position: fixed;
@@ -187,7 +182,6 @@
         .menu-overlay.active {
             display: block;
         }
-        
         /* FOOTER */
         footer {
             background: #2d3748;
@@ -218,7 +212,6 @@
             font-size: 14px;
             opacity: 0.8;
         }
-        
         /* SEÇÃO HERO */
         .hero {
             background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
@@ -235,7 +228,6 @@
             max-width: 600px;
             margin: 0 auto 32px;
         }
-        
         /* BENEFÍCIOS */
         .benefits {
             padding: 60px 0;
@@ -255,7 +247,6 @@
             color: #48bb78;
             margin-bottom: 16px;
         }
-        
         /* PÁGINA DE CADASTRO E LOGIN */
         .auth-container {
             max-width: 500px;
@@ -306,7 +297,6 @@
             color: #48bb78;
             font-weight: 500;
         }
-        
         /* ÁREA DO USUÁRIO */
         .user-area {
             padding: 40px 0;
@@ -335,7 +325,6 @@
             background: #48bb78;
             color: white;
         }
-        
         /* Dashboard */
         .dashboard {
             display: grid;
@@ -375,7 +364,6 @@
             width: 0%;
             transition: width 0.5s ease;
         }
-        
         /* Cards de ações rápidas */
         .quick-actions {
             display: grid;
@@ -401,7 +389,6 @@
             color: #48bb78;
             margin-bottom: 16px;
         }
-        
         /* PÁGINA DE TAREFAS */
         .tasks-container {
             padding: 40px 0;
@@ -449,7 +436,6 @@
         .task-title { font-size: 1.2rem; margin-bottom: 10px; }
         .task-summary { color: #718096; margin-bottom: 20px; font-size: 14px; }
         .task-value { font-weight: 700; color: #48bb78; margin-top: 15px; }
-        
         /* MODAL */
         .modal {
             display: none;
@@ -495,7 +481,6 @@
             border-radius: 8px;
             word-break: break-all;
         }
-        
         /* FORMULÁRIO DE ENVIO DE COMPROVANTE */
         .proof-form { margin-top: 30px; }
         .file-input-container {
@@ -515,7 +500,6 @@
             font-weight: 500;
         }
         .hidden-input { display: none; }
-        
         /* PÁGINA DE INDICAÇÃO */
         .referral-container { padding: 40px 0; }
         .referral-card {
@@ -555,7 +539,6 @@
             font-weight: 600;
             margin-top: 20px;
         }
-        
         /* PÁGINA DE SAQUES */
         .withdrawals-container { padding: 40px 0; }
         .withdrawal-form {
@@ -586,7 +569,6 @@
         }
         .status-pending { color: #dd6b20; }
         .status-paid { color: #2f855a; }
-        
         /* NOTIFICAÇÕES */
         .notification {
             position: fixed;
@@ -606,7 +588,6 @@
         }
         .notification.success { background: #48bb78; }
         .notification.error { background: #e53e3e; }
-        
         /* LOADING SPINNER */
         .spinner {
             display: none;
@@ -622,7 +603,6 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        
         /* RESPONSIVIDADE */
         @media (max-width: 768px) {
             h1 { font-size: 2.2rem; }
@@ -636,7 +616,6 @@
             .task-list { grid-template-columns: 1fr; }
             .referral-stats { flex-direction: column; gap: 20px; }
         }
-        
         @media (max-width: 480px) {
             .header-container { padding: 0 15px; }
             .desktop-menu { display: none; }
@@ -649,16 +628,13 @@
             .user-header { flex-direction: column; align-items: stretch; }
             .tasks-header { flex-direction: column; align-items: stretch; }
             .modal-content { padding: 20px; margin: 10px; }
-            
             /* Menu mobile aparece apenas para usuários logados */
             .user-menu {
                 display: none;
             }
         }
-        
         /* FAVICON */
         .favicon { display: none; }
-        
         /* MODAL DE VERIFICAÇÃO POR WHATSAPP */
         .verification-modal {
             display: none;
@@ -705,7 +681,6 @@
         .resend-code:hover {
             text-decoration: underline;
         }
-        
         /* CONTENT WRAPPER */
         #contentWrapper {
             flex: 1;
@@ -715,9 +690,8 @@
 <body>
     <!-- FAVICON -->
     <div class="favicon">
-        <link rel="icon" href="image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%2348BB78' d='M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.4-1.4 3.6 3.6 7.6-7.6L19 8l-9 9z'/></svg>">
+        <link rel="icon" href="image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%2348BB78' d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17H8v-2h2v2zm0-4H8V7h3v8z'/></svg>">
     </div>
-    
     <!-- HEADER - Sistema totalmente redesenhado -->
     <header>
         <div class="container header-container">
@@ -725,21 +699,18 @@
                 <i class="fas fa-check-square"></i>
                 <span>Taskin</span>
             </a>
-            
             <!-- Menu Desktop - Sempre visível para todas as páginas -->
             <nav class="desktop-menu" id="desktopMenu">
                 <a href="#" class="nav-link" data-page="home">Home</a>
                 <a href="#" class="nav-link" data-page="register">Cadastre-se</a>
                 <a href="#" class="nav-link" data-page="login">Login</a>
             </nav>
-            
             <!-- Botão de menu mobile - Apenas para usuários logados -->
             <button class="mobile-menu-btn" id="mobileMenuBtn">
                 <i class="fas fa-bars"></i>
             </button>
         </div>
     </header>
-    
     <!-- Menu Lateral Mobile - Apenas para usuários logados -->
     <div class="mobile-menu" id="mobileMenu">
         <div class="mobile-menu-header">
@@ -754,34 +725,29 @@
         <a href="#" class="mobile-menu-item" data-page="withdrawals">Saques</a>
         <a href="#" class="mobile-menu-item" id="mobileLogout">Sair</a>
     </div>
-    
     <!-- Overlay para menu mobile -->
     <div class="menu-overlay" id="menuOverlay"></div>
-    
     <!-- NOTIFICAÇÃO TOAST -->
     <div class="notification" id="notification"></div>
-    
     <!-- CONTEÚDO PRINCIPAL -->
     <div id="contentWrapper">
         <main id="mainContent">
             <!-- A página inicial será carregada aqui -->
         </main>
     </div>
-    
     <!-- FOOTER -->
     <footer>
         <div class="container footer-container">
             <div class="footer-links">
                 <a href="#" id="termsLink">Termos</a>
                 <a href="#" id="privacyLink">Privacidade</a>
-                <a href="https://wa.me/5581999980428" target="_blank" id="contactLink">Contato</a>
+                <a href="https://wa.me/558199980428" target="_blank" id="contactLink">Contato</a>
             </div>
             <div class="footer-copyright">
                 &copy; 2023 Taskin. Todos os direitos reservados.
             </div>
         </div>
     </footer>
-    
     <!-- MODAL DE DETALHES DA TAREFA -->
     <div class="modal" id="taskModal">
         <div class="modal-content">
@@ -797,7 +763,6 @@
             </div>
         </div>
     </div>
-    
     <!-- MODAL DE ENVIO DE COMPROVANTE -->
     <div class="modal" id="proofModal">
         <div class="modal-content">
@@ -823,7 +788,6 @@
             </form>
         </div>
     </div>
-    
     <!-- MODAL DE VERIFICAÇÃO POR WHATSAPP -->
     <div class="verification-modal" id="verificationModal">
         <div class="verification-content">
@@ -841,7 +805,6 @@
             <p class="resend-code" id="resendCodeBtn">Reenviar código</p>
         </div>
     </div>
-    
     <script>
         // ==================================================
         // CONFIGURAÇÕES E VARIÁVEIS GLOBAIS
@@ -860,7 +823,6 @@
             verificationCode: null,
             userToVerify: null
         };
-        
         // Dados mock de tarefas
         const MOCK_TASKS = [
             {
@@ -909,7 +871,6 @@
                 status: "available"
             }
         ];
-        
         // ==================================================
         // FUNÇÕES DE UTILIDADE
         // ==================================================
@@ -919,7 +880,6 @@
                 currency: 'BRL'
             }).format(value);
         }
-        
         function showNotification(message, type = 'success') {
             const notification = document.getElementById('notification');
             notification.textContent = message;
@@ -929,24 +889,20 @@
                 notification.classList.remove('show');
             }, 3000);
         }
-        
         function toggleSpinner(spinnerId, show) {
             const spinner = document.getElementById(spinnerId);
             if (spinner) {
                 spinner.style.display = show ? 'block' : 'none';
             }
         }
-        
         function validateWhatsApp(whatsapp) {
             const cleaned = whatsapp.replace(/\D/g, '');
             return cleaned.length === 11 && cleaned[2] === '9';
         }
-        
         function validateEmail(email) {
             const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return re.test(email);
         }
-        
         function maskWhatsApp(input) {
             let value = input.value.replace(/\D/g, '');
             if (value.length > 11) {
@@ -960,7 +916,6 @@
             }
             input.value = value;
         }
-        
         function isNewDay() {
             const now = new Date();
             const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -969,7 +924,6 @@
             const lastDay = new Date(lastDate.getFullYear(), lastDate.getMonth(), lastDate.getDate());
             return today.getTime() !== lastDay.getTime();
         }
-        
         function resetDailyTasks() {
             if (isNewDay()) {
                 state.dailyTaskCount = 0;
@@ -977,11 +931,9 @@
                 saveState();
             }
         }
-        
         function generateVerificationCode() {
             return Math.floor(100000 + Math.random() * 900000).toString();
         }
-        
         function showVerificationModal(user) {
             state.userToVerify = user;
             state.verificationCode = generateVerificationCode();
@@ -992,7 +944,6 @@
             document.getElementById('code1').focus();
             setupCodeInputNavigation();
         }
-        
         function setupCodeInputNavigation() {
             const codeInputs = document.querySelectorAll('.code-input');
             codeInputs.forEach((input, index) => {
@@ -1008,7 +959,6 @@
                 });
             });
         }
-        
         function verifyCode() {
             const codeInputs = document.querySelectorAll('.code-input');
             let enteredCode = '';
@@ -1041,13 +991,11 @@
                 showNotification('Código incorreto. Tente novamente.', 'error');
             }
         }
-        
         function resendCode() {
             state.verificationCode = generateVerificationCode();
             console.log('Novo código de verificação:', state.verificationCode);
             showNotification(`Novo código: ${state.verificationCode} (simulado)`, 'success');
         }
-        
         // ==================================================
         // FUNÇÕES DE PERSISTÊNCIA
         // ==================================================
@@ -1058,7 +1006,6 @@
                 console.error('Erro ao salvar estado:', e);
             }
         }
-        
         function loadState() {
             try {
                 const saved = localStorage.getItem('taskinState');
@@ -1079,7 +1026,6 @@
                 state.tasks = MOCK_TASKS;
             }
         }
-        
         function clearState() {
             state = {
                 currentUser: null,
@@ -1098,7 +1044,6 @@
             state.tasks = MOCK_TASKS;
             localStorage.removeItem('taskinState');
         }
-        
         // ==================================================
         // FUNÇÕES DE RENDERIZAÇÃO
         // ==================================================
@@ -1148,7 +1093,6 @@
             });
             updateHeaderUI();
         }
-        
         function renderRegisterPage() {
             document.title = "Taskin - Cadastro";
             const html = `
@@ -1195,7 +1139,6 @@
             });
             updateHeaderUI();
         }
-        
         function renderLoginPage() {
             document.title = "Taskin - Login";
             const html = `
@@ -1237,7 +1180,6 @@
             });
             updateHeaderUI();
         }
-        
         function renderUserArea() {
             document.title = "Taskin - Área do Usuário";
             const approvedTasks = state.userTasks.filter(t => t.status === 'approved');
@@ -1245,7 +1187,6 @@
             const totalBalance = totalFromTasks + state.referralEarnings;
             const withdrawalGoal = 10.00;
             const progressPercentage = Math.min((totalBalance / withdrawalGoal) * 100, 100);
-            
             const html = `
                 <div class="user-area">
                     <div class="container">
@@ -1302,25 +1243,20 @@
                 </div>
             `;
             document.getElementById('mainContent').innerHTML = html;
-            
             document.getElementById('quickTasks').addEventListener('click', function() {
                 state.currentPage = 'tasks';
                 renderTasksPage();
             });
-            
             document.getElementById('quickReferral').addEventListener('click', function() {
                 state.currentPage = 'referral';
                 renderReferralPage();
             });
-            
             document.getElementById('quickWithdrawal').addEventListener('click', function() {
                 state.currentPage = 'withdrawals';
                 renderWithdrawalsPage();
             });
-            
             updateHeaderUI();
         }
-        
         function renderTasksPage() {
             document.title = "Taskin - Tarefas Disponíveis";
             resetDailyTasks();
@@ -1340,31 +1276,25 @@
             renderTaskList();
             updateHeaderUI();
         }
-        
         function renderTaskList() {
             const taskList = document.getElementById('taskList');
             taskList.innerHTML = '';
             const availableTasks = state.tasks.filter(task => task.status === 'available');
-            
             if (availableTasks.length === 0) {
                 taskList.innerHTML = '<p class="text-center">Nenhuma tarefa disponível no momento. Volte mais tarde!</p>';
                 return;
             }
-            
             const remainingTasks = 5 - state.dailyTaskCount;
             const tasksToShow = availableTasks.slice(0, remainingTasks);
-            
             if (remainingTasks <= 0) {
                 taskList.innerHTML = '<p class="text-center">Você atingiu o limite diário de 5 tarefas. Volte amanhã!</p>';
                 return;
             }
-            
             tasksToShow.forEach(task => {
                 const taskCard = document.createElement('div');
                 taskCard.className = 'card task-card';
                 let statusClass = '';
                 let statusText = '';
-                
                 switch(task.status) {
                     case 'available':
                         statusClass = 'status-available';
@@ -1383,7 +1313,6 @@
                         statusText = 'Aprovado';
                         break;
                 }
-                
                 taskCard.innerHTML = `
                     <div class="task-status ${statusClass}">${statusText}</div>
                     <h3 class="task-title">${task.title}</h3>
@@ -1397,24 +1326,20 @@
                 });
             });
         }
-        
         function showTaskModal(taskId) {
             const task = state.tasks.find(t => t.id === taskId);
             if (!task) return;
-            
             const modal = document.getElementById('taskModal');
             const modalTitle = document.getElementById('modalTaskTitle');
             const modalDetails = document.getElementById('modalTaskDetails');
             const modalLink = document.getElementById('modalTaskLink');
             const modalValue = document.getElementById('modalTaskValue');
             const modalActions = document.getElementById('modalTaskActions');
-            
             modalTitle.textContent = task.title;
             modalDetails.textContent = task.details;
             modalLink.textContent = task.link;
             modalValue.textContent = `Valor: ${formatCurrency(task.value)}`;
             modalActions.innerHTML = '';
-            
             if (task.status === 'available') {
                 const acceptBtn = document.createElement('button');
                 acceptBtn.className = 'btn btn-primary';
@@ -1443,53 +1368,44 @@
                 statusText.style.color = '#2f855a';
                 modalActions.appendChild(statusText);
             }
-            
             modal.style.display = 'flex';
         }
-        
         function showProofModal(taskId) {
             const modal = document.getElementById('proofModal');
             const taskLinkInput = document.getElementById('taskLinkInput');
             const proofImage = document.getElementById('proofImage');
             const fileInputContainer = document.getElementById('fileInputContainer');
             const proofForm = document.getElementById('proofForm');
-            
             const task = state.tasks.find(t => t.id === taskId);
             if (task) {
                 taskLinkInput.value = task.link;
             }
-            
             proofImage.value = '';
             fileInputContainer.innerHTML = `
                 <i class="fas fa-cloud-upload-alt fa-2x" style="margin-bottom: 10px;"></i>
                 <p>Clique ou arraste uma imagem aqui</p>
                 <input type="file" class="hidden-input" id="proofImage" accept="image/*">
             `;
-            
             fileInputContainer.addEventListener('click', function() {
                 document.getElementById('proofImage').click();
             });
-            
             proofImage.addEventListener('change', function() {
                 if (this.files && this.files[0]) {
                     const fileName = this.files[0].name;
                     fileInputContainer.innerHTML = `<i class="fas fa-check-circle fa-2x" style="color: #48bb78; margin-bottom: 10px;"></i><p>${fileName}</p>`;
                 }
             });
-            
             modal.style.display = 'flex';
             proofForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 submitProof(taskId);
             });
         }
-        
         function renderReferralPage() {
             document.title = "Taskin - Indicação de Amigos";
             const whatsappDigits = state.currentUser.whatsapp.replace(/\D/g, '');
             const referralLink = `https://taskin.site?ref=whatsapp_${whatsappDigits}`;
             const isTopReferrer = state.referrals >= 5;
-            
             const html = `
                 <div class="referral-container">
                     <div class="container">
@@ -1527,13 +1443,11 @@
             });
             updateHeaderUI();
         }
-        
         function renderWithdrawalsPage() {
             document.title = "Taskin - Saques";
             const approvedTasks = state.userTasks.filter(t => t.status === 'approved');
             const totalFromTasks = approvedTasks.reduce((sum, task) => sum + task.value, 0);
             const totalBalance = totalFromTasks + state.referralEarnings;
-            
             let html = '';
             if (totalBalance < 10.00) {
                 html = `
@@ -1597,7 +1511,6 @@
             }
             updateHeaderUI();
         }
-        
         function renderWithdrawalsHistory() {
             const tableBody = document.getElementById('withdrawalsTableBody');
             tableBody.innerHTML = '';
@@ -1624,13 +1537,11 @@
                 tableBody.appendChild(row);
             });
         }
-        
         // Atualiza a UI do header com base no estado de login
         function updateHeaderUI() {
             const desktopMenu = document.getElementById('desktopMenu');
             const mobileMenuBtn = document.getElementById('mobileMenuBtn');
             const logo = document.getElementById('logo');
-            
             if (state.currentUser) {
                 // Usuário logado - mostra botão de menu mobile em dispositivos móveis
                 desktopMenu.innerHTML = `
@@ -1640,7 +1551,6 @@
                     <a href="#" class="nav-link" data-page="withdrawals">Saques</a>
                     <a href="#" class="nav-link" id="desktopLogout">Sair</a>
                 `;
-                
                 // Adiciona eventos aos links do menu desktop
                 document.querySelectorAll('.desktop-menu .nav-link').forEach(link => {
                     link.addEventListener('click', function(e) {
@@ -1654,7 +1564,6 @@
                         renderPage(page);
                     });
                 });
-                
                 // Mostra botão de menu mobile em dispositivos móveis
                 mobileMenuBtn.style.display = 'block';
             } else {
@@ -1664,7 +1573,6 @@
                     <a href="#" class="nav-link" data-page="register">Cadastre-se</a>
                     <a href="#" class="nav-link" data-page="login">Login</a>
                 `;
-                
                 // Adiciona eventos aos links do menu desktop
                 document.querySelectorAll('.desktop-menu .nav-link').forEach(link => {
                     link.addEventListener('click', function(e) {
@@ -1674,11 +1582,9 @@
                         renderPage(page);
                     });
                 });
-                
                 // Esconde botão de menu mobile em dispositivos móveis
                 mobileMenuBtn.style.display = 'none';
             }
-            
             // Atualiza logo
             logo.href = '#';
             logo.onclick = function(e) {
@@ -1692,7 +1598,6 @@
                 }
             };
         }
-        
         // ==================================================
         // FUNÇÕES DE MANIPULAÇÃO DE DADOS
         // ==================================================
@@ -1734,7 +1639,6 @@
             };
             showVerificationModal(newUser);
         }
-        
         function handleLogin(e) {
             e.preventDefault();
             const whatsapp = document.getElementById('loginWhatsapp').value.trim();
@@ -1764,7 +1668,6 @@
             }
             showVerificationModal({...state.currentUser});
         }
-        
         function handleLogout() {
             state.currentUser = null;
             state.currentPage = 'home';
@@ -1772,7 +1675,6 @@
             showNotification('Você saiu da sua conta.', 'success');
             renderHomePage();
         }
-        
         function acceptTask(taskId) {
             if (state.dailyTaskCount >= 5) {
                 showNotification('Você atingiu o limite diário de 5 tarefas. Volte amanhã!', 'error');
@@ -1800,7 +1702,6 @@
                 renderTaskList();
             }
         }
-        
         function submitProof(taskId) {
             const taskLinkInput = document.getElementById('taskLinkInput');
             const proofImage = document.getElementById('proofImage');
@@ -1830,7 +1731,6 @@
                 }
             }, 1500);
         }
-        
         function handleWithdrawal(e) {
             e.preventDefault();
             const pixKey = document.getElementById('pixKey').value.trim();
@@ -1869,7 +1769,6 @@
                 renderWithdrawalsHistory();
             }, 2000);
         }
-        
         // ==================================================
         // FUNÇÕES AUXILIARES
         // ==================================================
@@ -1884,7 +1783,6 @@
                 fieldElement.classList.add('error');
             }
         }
-        
         function clearErrors() {
             document.querySelectorAll('.error-message').forEach(el => {
                 el.style.display = 'none';
@@ -1893,7 +1791,6 @@
                 el.classList.remove('error');
             });
         }
-        
         function renderPage(page) {
             switch(page) {
                 case 'home':
@@ -1921,39 +1818,32 @@
                     renderHomePage();
             }
         }
-        
         // ==================================================
         // INICIALIZAÇÃO
         // ==================================================
         document.addEventListener('DOMContentLoaded', function() {
             // Carrega estado salvo
             loadState();
-            
             // Elementos do menu mobile
             const mobileMenuBtn = document.getElementById('mobileMenuBtn');
             const mobileMenu = document.getElementById('mobileMenu');
             const mobileMenuClose = document.getElementById('mobileMenuClose');
             const menuOverlay = document.getElementById('menuOverlay');
             const mobileLogout = document.getElementById('mobileLogout');
-            
             // Fecha menu mobile
             function closeMobileMenu() {
                 mobileMenu.classList.remove('active');
                 menuOverlay.classList.remove('active');
             }
-            
             // Abre menu mobile
             mobileMenuBtn.addEventListener('click', function() {
                 mobileMenu.classList.add('active');
                 menuOverlay.classList.add('active');
             });
-            
             // Fecha menu mobile ao clicar no X
             mobileMenuClose.addEventListener('click', closeMobileMenu);
-            
             // Fecha menu mobile ao clicar no overlay
             menuOverlay.addEventListener('click', closeMobileMenu);
-            
             // Fecha menu mobile ao clicar em um item
             document.querySelectorAll('.mobile-menu-item').forEach(item => {
                 item.addEventListener('click', function(e) {
@@ -1969,30 +1859,24 @@
                     closeMobileMenu();
                 });
             });
-            
             // Configura eventos dos links do footer
             document.getElementById('termsLink').addEventListener('click', function(e) {
                 e.preventDefault();
                 showNotification('Termos de uso: Nossos termos estão disponíveis em nosso site.', 'info');
             });
-            
             document.getElementById('privacyLink').addEventListener('click', function(e) {
                 e.preventDefault();
                 showNotification('Política de privacidade: Valorizamos sua privacidade e dados.', 'info');
             });
-            
             // Configura eventos dos modais
             document.getElementById('closeModal').addEventListener('click', function() {
                 document.getElementById('taskModal').style.display = 'none';
             });
-            
             document.getElementById('closeProofModal').addEventListener('click', function() {
                 document.getElementById('proofModal').style.display = 'none';
             });
-            
             document.getElementById('verifyCodeBtn').addEventListener('click', verifyCode);
             document.getElementById('resendCodeBtn').addEventListener('click', resendCode);
-            
             // Fecha modais ao clicar fora
             window.addEventListener('click', function(e) {
                 const taskModal = document.getElementById('taskModal');
@@ -2002,7 +1886,6 @@
                 if (e.target === proofModal) proofModal.style.display = 'none';
                 if (e.target === verificationModal) verificationModal.style.display = 'none';
             });
-            
             // Renderiza página inicial
             if (state.currentUser) {
                 state.currentPage = 'dashboard';
@@ -2011,7 +1894,6 @@
                 state.currentPage = 'home';
                 renderHomePage();
             }
-            
             console.log('Site Taskin inicializado com sucesso!');
         });
     </script>
