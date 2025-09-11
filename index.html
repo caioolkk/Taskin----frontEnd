@@ -635,54 +635,6 @@
         }
         /* FAVICON */
         .favicon { display: none; }
-        /* MODAL DE VERIFICAÇÃO POR WHATSAPP - REMOVIDO (ESTILOS NÃO SÃO MAIS NECESSÁRIOS) */
-        /*
-        .verification-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .verification-content {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            max-width: 500px;
-            width: 100%;
-            text-align: center;
-        }
-        .verification-title { margin-bottom: 20px; }
-        .verification-description { margin-bottom: 25px; color: #718096; }
-        .verification-code {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 25px;
-        }
-        .code-input {
-            width: 50px;
-            height: 50px;
-            text-align: center;
-            font-size: 24px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-        }
-        .resend-code {
-            margin-top: 15px;
-            color: #48bb78;
-            cursor: pointer;
-        }
-        .resend-code:hover {
-            text-decoration: underline;
-        }
-        */
         /* CONTENT WRAPPER */
         #contentWrapper {
             flex: 1;
@@ -790,25 +742,6 @@
             </form>
         </div>
     </div>
-    <!-- MODAL DE VERIFICAÇÃO POR WHATSAPP - REMOVIDO (ESTRUTURA HTML NÃO É MAIS NECESSÁRIA) -->
-    <!--
-    <div class="verification-modal" id="verificationModal">
-        <div class="verification-content">
-            <h3 class="verification-title">Verificação por WhatsApp</h3>
-            <p class="verification-description">Enviamos um código de 6 dígitos para o seu WhatsApp. Insira o código abaixo para verificar sua conta.</p>
-            <div class="verification-code">
-                <input type="text" class="code-input" maxlength="1" id="code1">
-                <input type="text" class="code-input" maxlength="1" id="code2">
-                <input type="text" class="code-input" maxlength="1" id="code3">
-                <input type="text" class="code-input" maxlength="1" id="code4">
-                <input type="text" class="code-input" maxlength="1" id="code5">
-                <input type="text" class="code-input" maxlength="1" id="code6">
-            </div>
-            <button class="btn btn-primary" id="verifyCodeBtn">Verificar Código</button>
-            <p class="resend-code" id="resendCodeBtn">Reenviar código</p>
-        </div>
-    </div>
-    -->
     <script>
         // ==================================================
         // CONFIGURAÇÕES E VARIÁVEIS GLOBAIS
@@ -824,9 +757,6 @@
             referralEarnings: 0,
             withdrawals: [],
             nextWithdrawalId: 1,
-            // As variáveis abaixo foram REMOVIDAS pois não são mais necessárias
-            // verificationCode: null,
-            // userToVerify: null
         };
         const API_BASE_URL = 'https://taskin-backend-in81.onrender.com/api';
         // Dados mock de tarefas
@@ -937,86 +867,6 @@
                 saveState();
             }
         }
-        // A função abaixo foi REMOVIDA pois não é mais necessária
-        /*
-        function generateVerificationCode() {
-            return Math.floor(100000 + Math.random() * 900000).toString();
-        }
-        */
-        // A função abaixo foi REMOVIDA e SUBSTITUÍDA por uma chamada à API
-        /*
-        function showVerificationModal(user) {
-            state.userToVerify = user;
-            state.verificationCode = generateVerificationCode();
-            console.log('Código de verificação:', state.verificationCode);
-            showNotification(`Código de verificação: ${state.verificationCode} (simulado)`, 'success');
-            const modal = document.getElementById('verificationModal');
-            modal.style.display = 'flex';
-            document.getElementById('code1').focus();
-            setupCodeInputNavigation();
-        }
-        */
-        // A função abaixo foi REMOVIDA pois não é mais necessária
-        /*
-        function setupCodeInputNavigation() {
-            const codeInputs = document.querySelectorAll('.code-input');
-            codeInputs.forEach((input, index) => {
-                input.addEventListener('input', function() {
-                    if (this.value.length === 1 && index < codeInputs.length - 1) {
-                        codeInputs[index + 1].focus();
-                    }
-                });
-                input.addEventListener('keydown', function(e) {
-                    if (e.key === 'Backspace' && this.value.length === 0 && index > 0) {
-                        codeInputs[index - 1].focus();
-                    }
-                });
-            });
-        }
-        */
-        // A função abaixo foi REMOVIDA pois não é mais necessária
-        /*
-        function verifyCode() {
-            const codeInputs = document.querySelectorAll('.code-input');
-            let enteredCode = '';
-            codeInputs.forEach(input => {
-                enteredCode += input.value;
-            });
-            if (enteredCode === state.verificationCode) {
-                document.getElementById('verificationModal').style.display = 'none';
-                codeInputs.forEach(input => {
-                    input.value = '';
-                });
-                if (state.userToVerify) {
-                    state.currentUser = state.userToVerify;
-                    state.userToVerify = null;
-                    state.verificationCode = null;
-                    if (!state.userTasks) {
-                        state.userTasks = [];
-                        state.dailyTaskCount = 0;
-                        state.lastTaskDate = null;
-                        state.referrals = 0;
-                        state.referralEarnings = 0;
-                        state.withdrawals = [];
-                    }
-                    saveState();
-                    showNotification('Verificação concluída! Bem-vindo ao Taskin.', 'success');
-                    state.currentPage = 'dashboard';
-                    renderUserArea();
-                }
-            } else {
-                showNotification('Código incorreto. Tente novamente.', 'error');
-            }
-        }
-        */
-        // A função abaixo foi REMOVIDA pois não é mais necessária
-        /*
-        function resendCode() {
-            state.verificationCode = generateVerificationCode();
-            console.log('Novo código de verificação:', state.verificationCode);
-            showNotification(`Novo código: ${state.verificationCode} (simulado)`, 'success');
-        }
-        */
         // ==================================================
         // FUNÇÕES DE PERSISTÊNCIA
         // ==================================================
@@ -1059,8 +909,6 @@
                 referralEarnings: 0,
                 withdrawals: [],
                 nextWithdrawalId: 1,
-                // verificationCode: null,
-                // userToVerify: null
             };
             state.tasks = MOCK_TASKS;
             localStorage.removeItem('taskinState');
@@ -1167,9 +1015,10 @@
                     <h2 class="auth-title">Entrar na sua conta</h2>
                     <form id="loginForm">
                         <div class="form-group">
-                            <label for="loginWhatsapp">WhatsApp</label>
-                            <input type="text" class="form-control" id="loginWhatsapp" required placeholder="(00) 90000-0000">
-                            <div class="error-message" id="loginWhatsappError">WhatsApp inválido</div>
+                            <!-- ALTERAÇÃO CIRÚRGICA: Mudou de "WhatsApp" para "E-mail" -->
+                            <label for="loginEmail">E-mail</label>
+                            <input type="email" class="form-control" id="loginEmail" required placeholder="seu@email.com">
+                            <div class="error-message" id="loginEmailError">E-mail inválido</div>
                         </div>
                         <div class="form-group">
                             <label for="loginPassword">Senha</label>
@@ -1178,6 +1027,7 @@
                         </div>
                         <button type="submit" class="btn btn-primary" id="loginBtn">Entrar</button>
                         <div class="auth-links">
+                            <!-- ALTERAÇÃO CIRÚRGICA: Mudou a mensagem e a ação do "Esqueceu a senha?" -->
                             <p><a href="#" id="forgotPasswordLink">Esqueceu a senha?</a></p>
                             <p>Ainda não tem conta? <a href="#" id="registerLink">Cadastre-se</a></p>
                         </div>
@@ -1185,14 +1035,11 @@
                 </div>
             `;
             document.getElementById('mainContent').innerHTML = html;
-            const loginWhatsappInput = document.getElementById('loginWhatsapp');
-            loginWhatsappInput.addEventListener('input', function() {
-                maskWhatsApp(this);
-            });
             document.getElementById('loginForm').addEventListener('submit', handleLogin);
             document.getElementById('forgotPasswordLink').addEventListener('click', function(e) {
                 e.preventDefault();
-                showNotification('Verifique seu WhatsApp para redefinir a senha.', 'success');
+                // --- ALTERAÇÃO CIRÚRGICA: Muda a notificação para e-mail ---
+                showNotification('Verifique seu e-mail para redefinir a senha.', 'success');
             });
             document.getElementById('registerLink').addEventListener('click', function(e) {
                 e.preventDefault();
@@ -1647,8 +1494,6 @@
                 hasError = true;
             }
             if (hasError) return;
-            // --- INÍCIO DA ALTERAÇÃO CIRÚRGICA ---
-            // Faz a chamada real à API de registro
             try {
                 const response = await fetch(`${API_BASE_URL}/register`, {
                     method: 'POST',
@@ -1661,9 +1506,7 @@
                 if (!response.ok) {
                     throw new Error(data.error || 'Erro ao registrar usuário.');
                 }
-                // Em vez de mostrar o modal de verificação, mostra uma notificação.
                 showNotification('Cadastro realizado! Verifique seu e-mail para o código de confirmação.', 'success');
-                // Opcional: Redireciona automaticamente para a página de login após alguns segundos.
                 setTimeout(() => {
                     state.currentPage = 'login';
                     renderLoginPage();
@@ -1672,16 +1515,18 @@
                 console.error('Erro no registro:', error);
                 showNotification(error.message, 'error');
             }
-            // --- FIM DA ALTERAÇÃO CIRÚRGICA ---
         }
-        function handleLogin(e) {
+        // --- ALTERAÇÃO CIRÚRGICA: Função handleLogin modificada para usar e-mail ---
+        async function handleLogin(e) {
             e.preventDefault();
-            const whatsapp = document.getElementById('loginWhatsapp').value.trim();
+            // --- ALTERADO: Pega o valor do campo de e-mail, não de WhatsApp ---
+            const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
             clearErrors();
             let hasError = false;
-            if (!validateWhatsApp(whatsapp)) {
-                showError('loginWhatsapp', 'WhatsApp inválido');
+            // --- ALTERADO: Validação de e-mail ---
+            if (!validateEmail(email)) {
+                showError('loginEmail', 'E-mail inválido');
                 hasError = true;
             }
             if (!password) {
@@ -1689,30 +1534,36 @@
                 hasError = true;
             }
             if (hasError) return;
-            if (!state.currentUser) {
-                showNotification('Nenhum usuário cadastrado. Por favor, cadastre-se primeiro.', 'error');
-                return;
+            // --- ALTERADO: Faz a chamada real à API de login ---
+            try {
+                const response = await fetch(`${API_BASE_URL}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'Credenciais inválidas.');
+                }
+                // --- Salva o usuário logado no estado ---
+                state.currentUser = {
+                    id: data.user.id,
+                    name: data.user.name,
+                    email: data.user.email,
+                    whatsapp: data.user.whatsapp
+                };
+                saveState();
+                state.currentPage = 'dashboard';
+                renderUserArea();
+                showNotification('Login realizado com sucesso!', 'success');
+            } catch (error) {
+                console.error('Erro no login:', error);
+                showNotification(error.message, 'error');
             }
-            if (state.currentUser.whatsapp !== whatsapp.replace(/\D/g, '')) {
-                showError('loginWhatsapp', 'WhatsApp não encontrado');
-                return;
-            }
-            if (state.currentUser.password !== password) {
-                showError('loginPassword', 'Senha incorreta');
-                return;
-            }
-            // --- INÍCIO DA ALTERAÇÃO CIRÚRGICA ---
-            // Aqui você também deveria fazer uma chamada à API /login.
-            // Mas como você pediu para mudar o mínimo possível, e o foco era o registro,
-            // deixei o login local por enquanto.
-            // Para um sistema completo, esta função também precisa ser conectada à API.
-            // --- FIM DA ALTERAÇÃO CIRÚRGICA ---
-            // showVerificationModal({...state.currentUser}); // Esta linha foi removida
-            state.currentUser = {...state.currentUser}; // Apenas para fins de demonstração, mantém o estado local.
-            state.currentPage = 'dashboard';
-            renderUserArea();
-            showNotification('Login realizado com sucesso!', 'success');
         }
+        // --- FIM DA ALTERAÇÃO CIRÚRGICA ---
         function handleLogout() {
             state.currentUser = null;
             state.currentPage = 'home';
@@ -1920,20 +1771,12 @@
             document.getElementById('closeProofModal').addEventListener('click', function() {
                 document.getElementById('proofModal').style.display = 'none';
             });
-            // As linhas abaixo foram REMOVIDAS pois não são mais necessárias
-            /*
-            document.getElementById('verifyCodeBtn').addEventListener('click', verifyCode);
-            document.getElementById('resendCodeBtn').addEventListener('click', resendCode);
-            */
             // Fecha modais ao clicar fora
             window.addEventListener('click', function(e) {
                 const taskModal = document.getElementById('taskModal');
                 const proofModal = document.getElementById('proofModal');
-                // A linha abaixo foi REMOVIDA pois o modal não existe mais
-                // const verificationModal = document.getElementById('verificationModal');
                 if (e.target === taskModal) taskModal.style.display = 'none';
                 if (e.target === proofModal) proofModal.style.display = 'none';
-                // if (e.target === verificationModal) verificationModal.style.display = 'none';
             });
             // Renderiza página inicial
             if (state.currentUser) {
