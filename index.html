@@ -865,6 +865,17 @@
                 saveState();
             }
         }
+        // --- INÍCIO DA FUNÇÃO PARA PROCESSAR INDICAÇÃO ---
+        function processReferral() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const refEmail = urlParams.get('ref');
+            if (refEmail) {
+                // Salva o e-mail do indicador no localStorage temporariamente
+                localStorage.setItem('referrerEmail', refEmail);
+                showNotification(`Você foi convidado por: ${refEmail}`, 'success');
+            }
+        }
+        // --- FIM DA FUNÇÃO PARA PROCESSAR INDICAÇÃO ---
         // ==================================================
         // FUNÇÕES DE PERSISTÊNCIA
         // ==================================================
@@ -910,6 +921,7 @@
             };
             state.tasks = MOCK_TASKS;
             localStorage.removeItem('taskinState');
+            localStorage.removeItem('referrerEmail'); // Limpa o e-mail do indicador
         }
         // ==================================================
         // FUNÇÕES DE RENDERIZAÇÃO
@@ -1269,8 +1281,9 @@
         }
         function renderReferralPage() {
             document.title = "Taskin - Indicação de Amigos";
-            const whatsappDigits = state.currentUser.whatsapp.replace(/\D/g, '');
-            const referralLink = `https://taskin.site?ref=whatsapp_${whatsappDigits}`;
+            // --- ALTERAÇÃO: Gera o link de indicação baseado no E-MAIL ---
+            const userEmail = state.currentUser.email;
+            const referralLink = `${window.location.origin}?ref=${encodeURIComponent(userEmail)}`;
             const isTopReferrer = state.referrals >= 5;
             const html = `
                 <div class="referral-container">
@@ -1505,12 +1518,18 @@
             registerBtn.disabled = true;
             registerBtn.textContent = 'Cadastrando...';
             try {
+                // --- Captura o e-mail do indicador do localStorage ---
+                const referrerEmail = localStorage.getItem('referrerEmail');
+                const payload = { name, email, whatsapp, password };
+                if (referrerEmail) {
+                    payload.referrerEmail = referrerEmail;
+                }
                 const response = await fetch(`${API_BASE_URL}/register`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ name, email, whatsapp, password })
+                    body: JSON.stringify(payload)
                 });
                 const data = await response.json();
                 if (!response.ok) {
@@ -1518,6 +1537,8 @@
                 }
                 // Em vez de mostrar o modal de verificação, mostra uma notificação.
                 showNotification('Cadastro realizado! Verifique seu e-mail para o código de confirmação.', 'success');
+                // Limpa o e-mail do indicador após o cadastro
+                localStorage.removeItem('referrerEmail');
                 // Opcional: Redireciona automaticamente para a página de login após alguns segundos.
                 setTimeout(() => {
                     state.currentPage = 'login';
@@ -1661,6 +1682,23 @@
                 }
             }, 1500);
         }
+        // --- INÍCIO DA ALTERAÇÃO: Função para simular o crédito de indicação ---
+        async function simulateReferralBonus(taskId) {
+            // Verifica se esta é a PRIMEIRA tarefa aprovada deste usuário
+            const approvedTasks = state.userTasks.filter(t => t.status === 'approved');
+            if (approvedTasks.length === 1) {
+                // Simula o crédito de R$1,00 ao indicador
+                const referrerEmail = localStorage.getItem('referrerEmail');
+                if (referrerEmail) {
+                    // Em um sistema real, isso seria feito no backend.
+                    // Aqui, apenas mostramos uma notificação.
+                    showNotification(`Parabéns! Sua primeira tarefa foi aprovada. Seu indicador (${referrerEmail}) receberá R$1,00!`, 'success');
+                    // Limpa o e-mail do indicador após o crédito
+                    localStorage.removeItem('referrerEmail');
+                }
+            }
+        }
+        // --- FIM DA ALTERAÇÃO ---
         function handleWithdrawal(e) {
             e.preventDefault();
             const pixKey = document.getElementById('pixKey').value.trim();
@@ -1752,6 +1790,8 @@
         // INICIALIZAÇÃO
         // ==================================================
         document.addEventListener('DOMContentLoaded', function() {
+            // --- PROCESSA A INDICAÇÃO AO CARREGAR A PÁGINA ---
+            processReferral();
             // Carrega estado salvo
             loadState();
             // Elementos do menu mobile
