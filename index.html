@@ -8,6 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Import FontAwesome CDN for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Adicione esta linha para o FingerprintJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"></script>
     <style>
         /* RESET E CONFIGURAÇÕES GERAIS */
         * {
@@ -1505,6 +1507,40 @@
                 hasError = true;
             }
             if (hasError) return;
+            // --- INÍCIO DA NOVA LÓGICA PARA DEVICE ID ---
+            let visitorId = null;
+            try {
+                const fp = await FingerprintJS.load();
+                const result = await fp.get();
+                visitorId = result.visitorId;
+                console.log("Device ID (Fingerprint):", visitorId);
+            } catch (fpError) {
+                console.warn("Não foi possível gerar o Device ID:", fpError);
+                // Continua o cadastro mesmo se falhar, mas em produção, você pode querer bloquear.
+            }
+            // Verifica se o Device ID já existe
+            if (visitorId) {
+                try {
+                    const checkResponse = await fetch(`${API_BASE_URL}/check-device`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ device_id: visitorId })
+                    });
+                    const checkData = await checkResponse.json();
+                    if (!checkResponse.ok) {
+                        throw new Error(checkData.error || 'Erro ao verificar dispositivo.');
+                    }
+                    if (checkData.exists) {
+                        showNotification('Já existe uma conta cadastrada neste aparelho.', 'error');
+                        return;
+                    }
+                } catch (checkError) {
+                    console.error('Erro ao verificar dispositivo:', checkError);
+                    showNotification('Erro ao verificar seu dispositivo. Tente novamente.', 'error');
+                    return;
+                }
+            }
+            // --- FIM DA NOVA LÓGICA PARA DEVICE ID ---
             // --- INÍCIO DA ALTERAÇÃO CIRÚRGICA ---
             // Mostra o spinner de carregamento
             const registerBtn = document.getElementById('registerBtn');
@@ -1520,10 +1556,9 @@
             try {
                 // --- Captura o e-mail do indicador do localStorage ---
                 const referrerEmail = localStorage.getItem('referrerEmail');
-                const payload = { name, email, whatsapp, password };
-                if (referrerEmail) {
-                    payload.referrerEmail = referrerEmail;
-                }
+                // --- ENVIAR O DEVICE ID PARA O BACKEND ---
+                const payload = { name, email, whatsapp, password, referrerEmail: referrerEmail || null, device_id: visitorId };
+                // --- FIM ---
                 const response = await fetch(`${API_BASE_URL}/register`, {
                     method: 'POST',
                     headers: {
@@ -1535,15 +1570,9 @@
                 if (!response.ok) {
                     throw new Error(data.error || 'Erro ao registrar usuário.');
                 }
-                // Em vez de mostrar o modal de verificação, mostra uma notificação.
-                showNotification('Cadastro realizado! Verifique seu e-mail para o código de confirmação.', 'success');
-                // Limpa o e-mail do indicador após o cadastro
+                // Em vez de mostrar o modal de verificação, mostra uma notificação e redireciona para a página de verificação.
+                showEmailVerificationPage(email);
                 localStorage.removeItem('referrerEmail');
-                // Opcional: Redireciona automaticamente para a página de login após alguns segundos.
-                setTimeout(() => {
-                    state.currentPage = 'login';
-                    renderLoginPage();
-                }, 3000);
             } catch (error) {
                 console.error('Erro no registro:', error);
                 showNotification(error.message, 'error');
@@ -1786,6 +1815,69 @@
                     renderHomePage();
             }
         }
+        // --- INÍCIO DA NOVA FUNÇÃO: Página de Verificação de E-mail ---
+        function showEmailVerificationPage(email) {
+            document.title = "Taskin - Verifique seu E-mail";
+            const html = `
+                <div class="auth-container">
+                    <h2 class="auth-title">Verifique seu E-mail</h2>
+                    <p>Enviamos um código de 6 dígitos para <strong>${email}</strong>.</p>
+                    <p>Por favor, insira o código abaixo para ativar sua conta.</p>
+                    <form id="verificationForm">
+                        <div class="form-group">
+                            <label for="verificationCode">Código de Verificação</label>
+                            <input type="text" class="form-control" id="verificationCode" required placeholder="Ex: 123456" maxlength="6">
+                            <div class="error-message" id="verificationCodeError">Código inválido</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="verifyBtn">Verificar Código</button>
+                        <div class="auth-links">
+                            <p>Não recebeu o código? <a href="#" id="resendCodeLink">Reenviar</a></p>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('mainContent').innerHTML = html;
+            document.getElementById('verificationForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const code = document.getElementById('verificationCode').value.trim();
+                if (!code || code.length !== 6) {
+                    showError('verificationCode', 'Por favor, insira um código de 6 dígitos.');
+                    return;
+                }
+                const verifyBtn = document.getElementById('verifyBtn');
+                verifyBtn.disabled = true;
+                verifyBtn.textContent = 'Verificando...';
+                try {
+                    const response = await fetch(`${API_BASE_URL}/verify-email`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, token: code })
+                    });
+                    const data = await response.json();
+                    if (!response.ok) {
+                        throw new Error(data.error || 'Falha na verificação.');
+                    }
+                    showNotification('E-mail verificado com sucesso! Você já pode fazer login.', 'success');
+                    setTimeout(() => {
+                        state.currentPage = 'login';
+                        renderLoginPage();
+                    }, 3000);
+                } catch (error) {
+                    console.error('Erro na verificação:', error);
+                    showNotification(error.message, 'error');
+                } finally {
+                    verifyBtn.disabled = false;
+                    verifyBtn.textContent = 'Verificar Código';
+                }
+            });
+            document.getElementById('resendCodeLink').addEventListener('click', async function(e) {
+                e.preventDefault();
+                // Em um sistema real, você chamaria uma rota /resend-token aqui.
+                showNotification('Funcionalidade de reenvio ainda não implementada.', 'info');
+            });
+            updateHeaderUI();
+        }
+        // --- FIM DA NOVA FUNÇÃO ---
         // ==================================================
         // INICIALIZAÇÃO
         // ==================================================
