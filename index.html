@@ -1541,18 +1541,21 @@
                 }
             }
             // --- FIM DA NOVA LÓGICA PARA DEVICE ID ---
-            // --- INÍCIO DA ALTERAÇÃO CIRÚRGICA ---
-            // Mostra o spinner de carregamento
+            // --- INÍCIO DA ALTERAÇÃO CIRÚRGICA: Adiciona animação de carregamento ---
             const registerBtn = document.getElementById('registerBtn');
+            const originalText = registerBtn.textContent;
+            // Cria o spinner
             const spinner = document.createElement('span');
             spinner.className = 'spinner';
             spinner.style.display = 'inline-block';
             spinner.style.width = '20px';
             spinner.style.height = '20px';
             spinner.style.marginLeft = '10px';
+            // Adiciona o spinner ao botão
             registerBtn.appendChild(spinner);
             registerBtn.disabled = true;
             registerBtn.textContent = 'Cadastrando...';
+            // --- FIM DA ALTERAÇÃO CIRÚRGICA ---
             try {
                 // --- Captura o e-mail do indicador do localStorage ---
                 const referrerEmail = localStorage.getItem('referrerEmail');
@@ -1577,14 +1580,14 @@
                 console.error('Erro no registro:', error);
                 showNotification(error.message, 'error');
             } finally {
-                // Remove o spinner e reabilita o botão
+                // --- INÍCIO DA ALTERAÇÃO CIRÚRGICA: Remove o spinner e restaura o botão ---
                 registerBtn.removeChild(spinner);
                 registerBtn.disabled = false;
-                registerBtn.textContent = 'Cadastrar';
+                registerBtn.textContent = originalText;
+                // --- FIM DA ALTERAÇÃO CIRÚRGICA ---
             }
-            // --- FIM DA ALTERAÇÃO CIRÚRGICA ---
         }
-        // --- ALTERAÇÃO CIRÚRGICA: Função handleLogin modificada para usar e-mail ---
+        // --- ALTERAÇÃO CIRÚRGICA: Função handleLogin modificada para redirecionar para verificação ---
         async function handleLogin(e) {
             e.preventDefault();
             // --- ALTERADO: Pega o valor do campo de e-mail, não de WhatsApp ---
@@ -1604,6 +1607,7 @@
             if (hasError) return;
             // --- Mostra o spinner de carregamento ---
             const loginBtn = document.getElementById('loginBtn');
+            const originalText = loginBtn.textContent;
             const spinner = document.createElement('span');
             spinner.className = 'spinner';
             spinner.style.display = 'inline-block';
@@ -1624,7 +1628,15 @@
                 });
                 const data = await response.json();
                 if (!response.ok) {
-                    throw new Error(data.error || 'Credenciais inválidas.');
+                    // --- ALTERAÇÃO PRINCIPAL: Se o erro for de e-mail não verificado, redireciona para a página de verificação ---
+                    if (data.error && data.error.includes('E-mail não verificado')) {
+                        showNotification('E-mail não verificado. Por favor, confirme seu e-mail.', 'error');
+                        // Redireciona para a página de verificação, passando o e-mail como parâmetro
+                        showEmailVerificationPage(email);
+                    } else {
+                        throw new Error(data.error || 'Credenciais inválidas.');
+                    }
+                    return; // Importante: retorna para não executar o código de login bem-sucedido
                 }
                 // --- Salva o usuário logado no estado ---
                 state.currentUser = {
@@ -1639,12 +1651,14 @@
                 showNotification('Login realizado com sucesso!', 'success');
             } catch (error) {
                 console.error('Erro no login:', error);
-                showNotification(error.message, 'error');
+                if (!(error.message && error.message.includes('E-mail não verificado'))) {
+                    showNotification(error.message, 'error');
+                }
             } finally {
                 // Remove o spinner e reabilita o botão
                 loginBtn.removeChild(spinner);
                 loginBtn.disabled = false;
-                loginBtn.textContent = 'Entrar';
+                loginBtn.textContent = originalText;
             }
         }
         // --- FIM DA ALTERAÇÃO CIRÚRGICA ---
@@ -1845,6 +1859,7 @@
                     return;
                 }
                 const verifyBtn = document.getElementById('verifyBtn');
+                const originalText = verifyBtn.textContent;
                 verifyBtn.disabled = true;
                 verifyBtn.textContent = 'Verificando...';
                 try {
@@ -1867,7 +1882,7 @@
                     showNotification(error.message, 'error');
                 } finally {
                     verifyBtn.disabled = false;
-                    verifyBtn.textContent = 'Verificar Código';
+                    verifyBtn.textContent = originalText;
                 }
             });
             document.getElementById('resendCodeLink').addEventListener('click', async function(e) {
