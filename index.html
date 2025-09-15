@@ -1887,8 +1887,21 @@
             });
             document.getElementById('resendCodeLink').addEventListener('click', async function(e) {
                 e.preventDefault();
-                // Em um sistema real, você chamaria uma rota /resend-token aqui.
-                showNotification('Funcionalidade de reenvio ainda não implementada.', 'info');
+                try {
+                    const response = await fetch(`${API_BASE_URL}/resend-token`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email })
+                    });
+                    const data = await response.json();
+                    if (!response.ok) {
+                        throw new Error(data.error || 'Falha ao reenviar o código.');
+                    }
+                    showNotification('Novo código enviado com sucesso! Verifique sua caixa de entrada.', 'success');
+                } catch (error) {
+                    console.error('Erro ao reenviar token:', error);
+                    showNotification(error.message, 'error');
+                }
             });
             updateHeaderUI();
         }
