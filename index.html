@@ -749,7 +749,8 @@
         let state = {
             currentUser: null,
             currentPage: 'home',
-            // Removemos os arrays locais de tarefas, pois agora tudo vem da API
+            tasks: [],
+            userTasks: [],
             dailyTaskCount: 0,
             lastTaskDate: null,
             referrals: 0,
@@ -758,7 +759,54 @@
             nextWithdrawalId: 1,
         };
         const API_BASE_URL = 'https://taskin-backend-in81.onrender.com/api';
-
+        // Dados mock de tarefas
+        const MOCK_TASKS = [
+            {
+                id: 1,
+                title: "Visite Curso de Inglês",
+                summary: "Fique 60s na página, tire print.",
+                details: "Clique no link, aguarde 1 minuto, tire print da tela mostrando o título do curso.",
+                link: "https://pay.hotmart.com/SEU_ID?checkoutMode=2",
+                value: 0.35,
+                status: "available"
+            },
+            {
+                id: 2,
+                title: "Teste App de Finanças",
+                summary: "Baixe o app, crie conta e explore por 2 minutos.",
+                details: "Baixe o app da loja, crie uma conta com seu e-mail, explore as funcionalidades por pelo menos 2 minutos e tire um print da tela inicial.",
+                link: "https://play.google.com/store/apps/details?id=com.finance.app",
+                value: 0.50,
+                status: "available"
+            },
+            {
+                id: 3,
+                title: "Responda Pesquisa Rápida",
+                summary: "Responda 5 perguntas sobre hábitos de consumo.",
+                details: "Clique no link e responda todas as 5 perguntas da pesquisa. Ao finalizar, tire um print da mensagem de agradecimento.",
+                link: "https://forms.gle/SEU_ID_PARA_PESQUISA",
+                value: 0.40,
+                status: "available"
+            },
+            {
+                id: 4,
+                title: "Assista Vídeo Promocional",
+                summary: "Assista vídeo até o final (2min30s).",
+                details: "Clique no link e assista o vídeo promocional até o final. Não pule! Tire um print quando aparecer a mensagem 'Obrigado por assistir!'.",
+                link: "https://www.youtube.com/watch?v=SEU_VIDEO_ID",
+                value: 0.60,
+                status: "available"
+            },
+            {
+                id: 5,
+                title: "Siga no Instagram",
+                summary: "Siga a página e tire print do perfil.",
+                details: "Acesse o perfil no Instagram, clique em 'Seguir' e tire um print mostrando que você está seguindo a página.",
+                link: "https://www.instagram.com/nome_da_empresa/",
+                value: 0.25,
+                status: "available"
+            }
+        ];
         // ==================================================
         // FUNÇÕES DE UTILIDADE
         // ==================================================
@@ -768,7 +816,6 @@
                 currency: 'BRL'
             }).format(value);
         }
-
         function showNotification(message, type = 'success') {
             const notification = document.getElementById('notification');
             notification.textContent = message;
@@ -778,24 +825,20 @@
                 notification.classList.remove('show');
             }, 3000);
         }
-
         function toggleSpinner(spinnerId, show) {
             const spinner = document.getElementById(spinnerId);
             if (spinner) {
                 spinner.style.display = show ? 'block' : 'none';
             }
         }
-
         function validateWhatsApp(whatsapp) {
             const cleaned = whatsapp.replace(/\D/g, '');
             return cleaned.length === 11 && cleaned[2] === '9';
         }
-
         function validateEmail(email) {
             const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return re.test(email);
         }
-
         function maskWhatsApp(input) {
             let value = input.value.replace(/\D/g, '');
             if (value.length > 11) {
@@ -809,7 +852,6 @@
             }
             input.value = value;
         }
-
         function isNewDay() {
             const now = new Date();
             const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -818,7 +860,6 @@
             const lastDay = new Date(lastDate.getFullYear(), lastDate.getMonth(), lastDate.getDate());
             return today.getTime() !== lastDay.getTime();
         }
-
         function resetDailyTasks() {
             if (isNewDay()) {
                 state.dailyTaskCount = 0;
@@ -826,7 +867,6 @@
                 saveState();
             }
         }
-
         // --- INÍCIO DA FUNÇÃO PARA PROCESSAR INDICAÇÃO ---
         function processReferral() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -838,7 +878,6 @@
             }
         }
         // --- FIM DA FUNÇÃO PARA PROCESSAR INDICAÇÃO ---
-
         // ==================================================
         // FUNÇÕES DE PERSISTÊNCIA
         // ==================================================
@@ -849,7 +888,6 @@
                 console.error('Erro ao salvar estado:', e);
             }
         }
-
         function loadState() {
             try {
                 const saved = localStorage.getItem('taskinState');
@@ -858,7 +896,8 @@
                     state = {
                         ...state,
                         ...parsed,
-                        // Mantemos apenas os dados que fazem sentido serem persistidos localmente
+                        tasks: parsed.tasks || MOCK_TASKS,
+                        userTasks: parsed.userTasks || [],
                         withdrawals: parsed.withdrawals || [],
                         nextWithdrawalId: parsed.nextWithdrawalId || 1
                     };
@@ -866,13 +905,15 @@
                 }
             } catch (e) {
                 console.error('Erro ao carregar estado:', e);
+                state.tasks = MOCK_TASKS;
             }
         }
-
         function clearState() {
             state = {
                 currentUser: null,
                 currentPage: 'home',
+                tasks: [],
+                userTasks: [],
                 dailyTaskCount: 0,
                 lastTaskDate: null,
                 referrals: 0,
@@ -880,57 +921,10 @@
                 withdrawals: [],
                 nextWithdrawalId: 1,
             };
+            state.tasks = MOCK_TASKS;
             localStorage.removeItem('taskinState');
             localStorage.removeItem('referrerEmail'); // Limpa o e-mail do indicador
-            localStorage.removeItem('taskinUserToken'); // Limpa o token JWT
         }
-
-        // --- NOVA FUNÇÃO: Obtém o token JWT do localStorage ---
-        function getAuthToken() {
-            return localStorage.getItem('taskinUserToken');
-        }
-
-        // --- NOVA FUNÇÃO: Salva o token JWT no localStorage ---
-        function setAuthToken(token) {
-            localStorage.setItem('taskinUserToken', token);
-        }
-
-        // --- NOVA FUNÇÃO: Remove o token JWT do localStorage ---
-        function clearAuthToken() {
-            localStorage.removeItem('taskinUserToken');
-        }
-
-        // --- NOVA FUNÇÃO: Faz uma requisição autenticada à API ---
-        async function apiRequest(url, options = {}) {
-            const defaultHeaders = {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            };
-
-            // Se houver um token, adiciona ao header de autorização
-            const token = getAuthToken();
-            if (token) {
-                defaultHeaders['Authorization'] = `Bearer ${token}`;
-            }
-
-            const config = {
-                ...options,
-                headers: { ...defaultHeaders, ...options.headers }
-            };
-
-            try {
-                const response = await fetch(`${API_BASE_URL}${url}`, config);
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({}));
-                    throw new Error(errorData.error || `Erro ${response.status}: ${response.statusText}`);
-                }
-                return await response.json();
-            } catch (error) {
-                console.error(`API Error (${url}):`, error);
-                throw error;
-            }
-        }
-
         // ==================================================
         // FUNÇÕES DE RENDERIZAÇÃO
         // ==================================================
@@ -980,7 +974,6 @@
             });
             updateHeaderUI();
         }
-
         function renderRegisterPage() {
             document.title = "Taskin - Cadastro";
             const html = `
@@ -1027,7 +1020,6 @@
             });
             updateHeaderUI();
         }
-
         function renderLoginPage() {
             document.title = "Taskin - Login";
             const html = `
@@ -1068,31 +1060,13 @@
             });
             updateHeaderUI();
         }
-
-        async function renderUserArea() {
+        function renderUserArea() {
             document.title = "Taskin - Área do Usuário";
-            // --- NOVA LÓGICA: Busca os dados atualizados do usuário do backend ---
-            try {
-                const userData = await apiRequest('/users/me');
-                state.currentUser = {
-                    id: userData.id,
-                    name: userData.name,
-                    email: userData.email,
-                    whatsapp: userData.whatsapp,
-                    balance: userData.balance // Saldo vem diretamente do backend
-                };
-                saveState();
-            } catch (error) {
-                console.error('Erro ao buscar dados do usuário:', error);
-                showNotification('Erro ao carregar seus dados. Por favor, faça login novamente.', 'error');
-                handleLogout();
-                return;
-            }
-
-            const totalBalance = state.currentUser.balance;
+            const approvedTasks = state.userTasks.filter(t => t.status === 'approved');
+            const totalFromTasks = approvedTasks.reduce((sum, task) => sum + task.value, 0);
+            const totalBalance = totalFromTasks + state.referralEarnings;
             const withdrawalGoal = 10.00;
             const progressPercentage = Math.min((totalBalance / withdrawalGoal) * 100, 100);
-
             const html = `
                 <div class="user-area">
                     <div class="container">
@@ -1164,6 +1138,8 @@
             updateHeaderUI();
         }
 
+        // --- INÍCIO DA ALTERAÇÃO CIRÚRGICA ---
+        // Função modificada para buscar a próxima tarefa do backend
         async function renderTasksPage() {
             document.title = "Taskin - Tarefas Disponíveis";
             resetDailyTasks();
@@ -1185,21 +1161,38 @@
             updateHeaderUI();
         }
 
-        // --- NOVA FUNÇÃO: Carrega a próxima tarefa do backend ---
+        // Nova função: Carrega a próxima tarefa do backend
         async function loadNextTaskFromAPI() {
             const taskList = document.getElementById('taskList');
             taskList.innerHTML = '<div class="spinner" id="taskSpinner" style="display: block; margin: 40px auto;"></div>';
 
             try {
-                const response = await apiRequest('/tasks/next');
-                taskList.innerHTML = ''; // Limpa o spinner
+                // Verifica o token JWT
+                const token = localStorage.getItem('taskinUserToken');
+                if (!token) {
+                    throw new Error('Usuário não autenticado.');
+                }
 
-                if (!response.task) {
+                const response = await fetch(`${API_BASE_URL}/tasks/next`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Erro ao buscar tarefa.');
+                }
+
+                taskList.innerHTML = '';
+
+                if (!data.task) {
                     taskList.innerHTML = '<p class="text-center">Nenhuma tarefa disponível no momento. Volte mais tarde!</p>';
                     return;
                 }
-
-                const task = response.task;
 
                 // Verifica o limite diário
                 if (state.dailyTaskCount >= 5) {
@@ -1207,27 +1200,14 @@
                     return;
                 }
 
+                const task = data.task;
+
                 // Cria o card da tarefa
                 const taskCard = document.createElement('div');
                 taskCard.className = 'card task-card';
 
-                let statusClass = '';
-                let statusText = '';
-                // O status vem do backend, mas podemos mapear para o nosso frontend
-                switch(task.status) {
-                    case 'active':
-                        statusClass = 'status-available';
-                        statusText = 'Disponível';
-                        break;
-                    case 'inactive':
-                    case 'completed':
-                        statusClass = 'status-rejected'; // Usamos rejected como "indisponível"
-                        statusText = 'Indisponível';
-                        break;
-                    default:
-                        statusClass = 'status-available';
-                        statusText = 'Disponível';
-                }
+                let statusClass = 'status-available';
+                let statusText = 'Disponível';
 
                 taskCard.innerHTML = `
                     <div class="task-status ${statusClass}">${statusText}</div>
@@ -1252,7 +1232,7 @@
             }
         }
 
-        // --- NOVA FUNÇÃO: Mostra o modal com os detalhes da tarefa vinda do backend ---
+        // Função modificada para mostrar o modal com a tarefa vinda do backend
         function showTaskModal(task) {
             const modal = document.getElementById('taskModal');
             const modalTitle = document.getElementById('modalTaskTitle');
@@ -1272,62 +1252,20 @@
             const acceptBtn = document.createElement('button');
             acceptBtn.className = 'btn btn-primary';
             acceptBtn.textContent = 'Aceitar Tarefa';
-            acceptBtn.addEventListener('click', async function() {
-                try {
-                    // Ao "aceitar", já estamos atribuindo a tarefa ao usuário no backend.
-                    // Atualizamos o estado local.
-                    state.dailyTaskCount++;
-                    state.lastTaskDate = new Date().toISOString();
-                    saveState();
+            acceptBtn.addEventListener('click', function() {
+                // Atualiza o estado local
+                state.dailyTaskCount++;
+                state.lastTaskDate = new Date().toISOString();
+                saveState();
 
-                    showNotification('Tarefa aceita! Complete e envie o comprovante.', 'success');
-                    modal.style.display = 'none';
-                } catch (error) {
-                    console.error('Erro ao aceitar tarefa:', error);
-                    showNotification('Erro ao aceitar tarefa. Tente novamente.', 'error');
-                }
+                showNotification('Tarefa aceita! Complete e envie o comprovante.', 'success');
+                modal.style.display = 'none';
             });
 
             modalActions.appendChild(acceptBtn);
             modal.style.display = 'flex';
         }
-
-        function showProofModal(taskId) {
-            const modal = document.getElementById('proofModal');
-            const taskLinkInput = document.getElementById('taskLinkInput');
-            const proofImage = document.getElementById('proofImage');
-            const fileInputContainer = document.getElementById('fileInputContainer');
-            const proofForm = document.getElementById('proofForm');
-
-            // Em um sistema real, você buscaria os detalhes da tarefa pelo ID.
-            // Aqui, apenas preenchemos o link como exemplo.
-            taskLinkInput.value = '';
-
-            proofImage.value = '';
-            fileInputContainer.innerHTML = `
-                <i class="fas fa-cloud-upload-alt fa-2x" style="margin-bottom: 10px;"></i>
-                <p>Clique ou arraste uma imagem aqui</p>
-                <input type="file" class="hidden-input" id="proofImage" accept="image/*">
-            `;
-
-            fileInputContainer.addEventListener('click', function() {
-                document.getElementById('proofImage').click();
-            });
-
-            proofImage.addEventListener('change', function() {
-                if (this.files && this.files[0]) {
-                    const fileName = this.files[0].name;
-                    fileInputContainer.innerHTML = `<i class="fas fa-check-circle fa-2x" style="color: #48bb78; margin-bottom: 10px;"></i><p>${fileName}</p>`;
-                }
-            });
-
-            modal.style.display = 'flex';
-
-            proofForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                submitProof(taskId);
-            });
-        }
+        // --- FIM DA ALTERAÇÃO CIRÚRGICA ---
 
         function renderReferralPage() {
             document.title = "Taskin - Indicação de Amigos";
@@ -1372,12 +1310,12 @@
             });
             updateHeaderUI();
         }
-
         function renderWithdrawalsPage() {
             document.title = "Taskin - Saques";
-            const totalBalance = state.currentUser.balance;
+            const approvedTasks = state.userTasks.filter(t => t.status === 'approved');
+            const totalFromTasks = approvedTasks.reduce((sum, task) => sum + task.value, 0);
+            const totalBalance = totalFromTasks + state.referralEarnings;
             let html = '';
-
             if (totalBalance < 10.00) {
                 html = `
                     <div class="withdrawals-container">
@@ -1433,17 +1371,13 @@
                     </div>
                 `;
             }
-
             document.getElementById('mainContent').innerHTML = html;
-
             if (totalBalance >= 10.00) {
                 document.getElementById('withdrawalForm').addEventListener('submit', handleWithdrawal);
                 renderWithdrawalsHistory();
             }
-
             updateHeaderUI();
         }
-
         function renderWithdrawalsHistory() {
             const tableBody = document.getElementById('withdrawalsTableBody');
             tableBody.innerHTML = '';
@@ -1451,7 +1385,6 @@
                 tableBody.innerHTML = '<tr><td colspan="3" style="text-align: center;">Nenhum saque realizado ainda.</td></tr>';
                 return;
             }
-
             const sortedWithdrawals = [...state.withdrawals].sort((a, b) => new Date(b.date) - new Date(a.date));
             sortedWithdrawals.forEach(withdrawal => {
                 const row = document.createElement('tr');
@@ -1463,7 +1396,6 @@
                 } else if (withdrawal.status === 'Pago') {
                     statusClass = 'status-paid';
                 }
-
                 row.innerHTML = `
                     <td>${formattedDate}</td>
                     <td>${formatCurrency(withdrawal.amount)}</td>
@@ -1472,15 +1404,13 @@
                 tableBody.appendChild(row);
             });
         }
-
         // Atualiza a UI do header com base no estado de login
         function updateHeaderUI() {
             const desktopMenu = document.getElementById('desktopMenu');
             const mobileMenuBtn = document.getElementById('mobileMenuBtn');
             const logo = document.getElementById('logo');
-
             if (state.currentUser) {
-                // Usuário logado - mostra menu de usuário
+                // Usuário logado - mostra botão de menu mobile em dispositivos móveis
                 desktopMenu.innerHTML = `
                     <a href="#" class="nav-link" data-page="dashboard">Home</a>
                     <a href="#" class="nav-link" data-page="tasks">Tarefas</a>
@@ -1488,7 +1418,6 @@
                     <a href="#" class="nav-link" data-page="withdrawals">Saques</a>
                     <a href="#" class="nav-link" id="desktopLogout">Sair</a>
                 `;
-
                 // Adiciona eventos aos links do menu desktop
                 document.querySelectorAll('.desktop-menu .nav-link').forEach(link => {
                     link.addEventListener('click', function(e) {
@@ -1502,7 +1431,6 @@
                         renderPage(page);
                     });
                 });
-
                 // Mostra botão de menu mobile em dispositivos móveis
                 mobileMenuBtn.style.display = 'block';
             } else {
@@ -1512,7 +1440,6 @@
                     <a href="#" class="nav-link" data-page="register">Cadastre-se</a>
                     <a href="#" class="nav-link" data-page="login">Login</a>
                 `;
-
                 // Adiciona eventos aos links do menu desktop
                 document.querySelectorAll('.desktop-menu .nav-link').forEach(link => {
                     link.addEventListener('click', function(e) {
@@ -1522,11 +1449,9 @@
                         renderPage(page);
                     });
                 });
-
                 // Esconde botão de menu mobile em dispositivos móveis
                 mobileMenuBtn.style.display = 'none';
             }
-
             // Atualiza logo
             logo.href = '#';
             logo.onclick = function(e) {
@@ -1540,7 +1465,6 @@
                 }
             };
         }
-
         // ==================================================
         // FUNÇÕES DE MANIPULAÇÃO DE DADOS
         // ==================================================
@@ -1550,10 +1474,8 @@
             const whatsapp = document.getElementById('whatsapp').value.trim();
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
-
             clearErrors();
             let hasError = false;
-
             if (!name) {
                 showError('name', 'Por favor, digite seu nome');
                 hasError = true;
@@ -1571,7 +1493,6 @@
                 hasError = true;
             }
             if (hasError) return;
-
             // --- INÍCIO DA NOVA LÓGICA PARA DEVICE ID ---
             let visitorId = null;
             try {
@@ -1581,8 +1502,8 @@
                 console.log("Device ID (Fingerprint):", visitorId);
             } catch (fpError) {
                 console.warn("Não foi possível gerar o Device ID:", fpError);
+                // Continua o cadastro mesmo se falhar, mas em produção, você pode querer bloquear.
             }
-
             // Verifica se o Device ID já existe
             if (visitorId) {
                 try {
@@ -1606,26 +1527,27 @@
                 }
             }
             // --- FIM DA NOVA LÓGICA PARA DEVICE ID ---
-
-            // --- Mostra o spinner de carregamento ---
+            // --- INÍCIO DA ALTERAÇÃO CIRÚRGICA: Adiciona animação de carregamento ---
             const registerBtn = document.getElementById('registerBtn');
             const originalText = registerBtn.textContent;
+            // Cria o spinner
             const spinner = document.createElement('span');
             spinner.className = 'spinner';
             spinner.style.display = 'inline-block';
             spinner.style.width = '20px';
             spinner.style.height = '20px';
             spinner.style.marginLeft = '10px';
+            // Adiciona o spinner ao botão
             registerBtn.appendChild(spinner);
             registerBtn.disabled = true;
             registerBtn.textContent = 'Cadastrando...';
-
+            // --- FIM DA ALTERAÇÃO CIRÚRGICA ---
             try {
                 // --- Captura o e-mail do indicador do localStorage ---
                 const referrerEmail = localStorage.getItem('referrerEmail');
                 // --- ENVIAR O DEVICE ID PARA O BACKEND ---
                 const payload = { name, email, whatsapp, password, referrerEmail: referrerEmail || null, device_id: visitorId };
-
+                // --- FIM ---
                 const response = await fetch(`${API_BASE_URL}/register`, {
                     method: 'POST',
                     headers: {
@@ -1633,13 +1555,10 @@
                     },
                     body: JSON.stringify(payload)
                 });
-
                 const data = await response.json();
-
                 if (!response.ok) {
                     throw new Error(data.error || 'Erro ao registrar usuário.');
                 }
-
                 // Em vez de mostrar o modal de verificação, mostra uma notificação e redireciona para a página de verificação.
                 showEmailVerificationPage(email);
                 localStorage.removeItem('referrerEmail');
@@ -1647,22 +1566,22 @@
                 console.error('Erro no registro:', error);
                 showNotification(error.message, 'error');
             } finally {
-                // Remove o spinner e reabilita o botão
+                // --- INÍCIO DA ALTERAÇÃO CIRÚRGICA: Remove o spinner e restaura o botão ---
                 registerBtn.removeChild(spinner);
                 registerBtn.disabled = false;
                 registerBtn.textContent = originalText;
+                // --- FIM DA ALTERAÇÃO CIRÚRGICA ---
             }
         }
-
-        // --- ALTERAÇÃO CIRÚRGICA: Função handleLogin modificada para salvar o token JWT ---
+        // --- ALTERAÇÃO CIRÚRGICA: Função handleLogin modificada para redirecionar para verificação ---
         async function handleLogin(e) {
             e.preventDefault();
+            // --- ALTERADO: Pega o valor do campo de e-mail, não de WhatsApp ---
             const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
-
             clearErrors();
             let hasError = false;
-
+            // --- ALTERADO: Validação de e-mail ---
             if (!validateEmail(email)) {
                 showError('loginEmail', 'E-mail inválido');
                 hasError = true;
@@ -1672,7 +1591,6 @@
                 hasError = true;
             }
             if (hasError) return;
-
             // --- Mostra o spinner de carregamento ---
             const loginBtn = document.getElementById('loginBtn');
             const originalText = loginBtn.textContent;
@@ -1685,7 +1603,7 @@
             loginBtn.appendChild(spinner);
             loginBtn.disabled = true;
             loginBtn.textContent = 'Entrando...';
-
+            // --- ALTERADO: Faz a chamada real à API de login ---
             try {
                 const response = await fetch(`${API_BASE_URL}/login`, {
                     method: 'POST',
@@ -1694,22 +1612,18 @@
                     },
                     body: JSON.stringify({ email, password })
                 });
-
                 const data = await response.json();
-
                 if (!response.ok) {
+                    // --- ALTERAÇÃO PRINCIPAL: Se o erro for de e-mail não verificado, redireciona para a página de verificação ---
                     if (data.error && data.error.includes('E-mail não verificado')) {
                         showNotification('E-mail não verificado. Por favor, confirme seu e-mail.', 'error');
+                        // Redireciona para a página de verificação, passando o e-mail como parâmetro
                         showEmailVerificationPage(email);
                     } else {
                         throw new Error(data.error || 'Credenciais inválidas.');
                     }
-                    return;
+                    return; // Importante: retorna para não executar o código de login bem-sucedido
                 }
-
-                // --- SALVA O TOKEN JWT ---
-                setAuthToken(data.token);
-
                 // --- Salva o usuário logado no estado ---
                 state.currentUser = {
                     id: data.user.id,
@@ -1717,7 +1631,8 @@
                     email: data.user.email,
                     whatsapp: data.user.whatsapp
                 };
-
+                // --- SALVA O TOKEN JWT ---
+                localStorage.setItem('taskinUserToken', data.token);
                 saveState();
                 state.currentPage = 'dashboard';
                 renderUserArea();
@@ -1735,20 +1650,43 @@
             }
         }
         // --- FIM DA ALTERAÇÃO CIRÚRGICA ---
-
         function handleLogout() {
             state.currentUser = null;
             state.currentPage = 'home';
-            clearAuthToken(); // Remove o token JWT
-            clearState(); // Limpa o estado local
+            saveState();
             showNotification('Você saiu da sua conta.', 'success');
             renderHomePage();
         }
-
-        async function submitProof(taskId) {
+        function acceptTask(taskId) {
+            if (state.dailyTaskCount >= 5) {
+                showNotification('Você atingiu o limite diário de 5 tarefas. Volte amanhã!', 'error');
+                return;
+            }
+            const taskIndex = state.tasks.findIndex(t => t.id === taskId);
+            if (taskIndex === -1) return;
+            const userTask = state.userTasks.find(t => t.id === taskId);
+            if (userTask && userTask.status !== 'available') {
+                showNotification('Você já aceitou esta tarefa.', 'error');
+                return;
+            }
+            state.tasks[taskIndex].status = 'in_progress';
+            if (!userTask) {
+                state.userTasks.push({...state.tasks[taskIndex]});
+            } else {
+                const userTaskIndex = state.userTasks.findIndex(t => t.id === taskId);
+                state.userTasks[userTaskIndex].status = 'in_progress';
+            }
+            state.dailyTaskCount++;
+            state.lastTaskDate = new Date().toISOString();
+            saveState();
+            showNotification('Tarefa aceita! Complete e envie o comprovante.', 'success');
+            if (state.currentPage === 'tasks') {
+                renderTaskList();
+            }
+        }
+        function submitProof(taskId) {
             const taskLinkInput = document.getElementById('taskLinkInput');
             const proofImage = document.getElementById('proofImage');
-
             if (!taskLinkInput.value) {
                 showNotification('Por favor, insira o link da tarefa realizada.', 'error');
                 return;
@@ -1757,42 +1695,47 @@
                 showNotification('Por favor, selecione uma imagem de comprovante.', 'error');
                 return;
             }
-
             toggleSpinner('proofSpinner', true);
-
-            try {
-                // Em um sistema real, você faria upload da imagem para um serviço de armazenamento (ex: Cloudinary, S3)
-                // e enviaria a URL da imagem. Aqui, simulamos enviando apenas o link da tarefa.
-                const proofLink = taskLinkInput.value;
-
-                const response = await apiRequest('/tasks/submit-proof', {
-                    method: 'POST',
-                    body: JSON.stringify({ taskId, proofLink })
-                });
-
+            setTimeout(() => {
                 toggleSpinner('proofSpinner', false);
+                const taskIndex = state.tasks.findIndex(t => t.id === taskId);
+                if (taskIndex === -1) return;
+                state.tasks[taskIndex].status = 'submitted';
+                const userTaskIndex = state.userTasks.findIndex(t => t.id === taskId);
+                if (userTaskIndex !== -1) {
+                    state.userTasks[userTaskIndex].status = 'submitted';
+                }
+                saveState();
                 document.getElementById('proofModal').style.display = 'none';
                 showNotification('Comprovante enviado! Aguarde aprovação.', 'success');
-
-                // Atualiza a página de tarefas para mostrar o novo status
                 if (state.currentPage === 'tasks') {
-                    await loadNextTaskFromAPI();
+                    renderTaskList();
                 }
-            } catch (error) {
-                toggleSpinner('proofSpinner', false);
-                console.error('Erro ao enviar comprovante:', error);
-                showNotification('Erro ao enviar comprovante. Tente novamente.', 'error');
+            }, 1500);
+        }
+        // --- INÍCIO DA ALTERAÇÃO: Função para simular o crédito de indicação ---
+        async function simulateReferralBonus(taskId) {
+            // Verifica se esta é a PRIMEIRA tarefa aprovada deste usuário
+            const approvedTasks = state.userTasks.filter(t => t.status === 'approved');
+            if (approvedTasks.length === 1) {
+                // Simula o crédito de R$1,00 ao indicador
+                const referrerEmail = localStorage.getItem('referrerEmail');
+                if (referrerEmail) {
+                    // Em um sistema real, isso seria feito no backend.
+                    // Aqui, apenas mostramos uma notificação.
+                    showNotification(`Parabéns! Sua primeira tarefa foi aprovada. Seu indicador (${referrerEmail}) receberá R$1,00!`, 'success');
+                    // Limpa o e-mail do indicador após o crédito
+                    localStorage.removeItem('referrerEmail');
+                }
             }
         }
-
+        // --- FIM DA ALTERAÇÃO ---
         function handleWithdrawal(e) {
             e.preventDefault();
             const pixKey = document.getElementById('pixKey').value.trim();
             const withdrawalAmount = parseFloat(document.getElementById('withdrawalAmount').value);
-
             clearErrors();
             let hasError = false;
-
             if (!pixKey) {
                 showError('pixKey', 'Por favor, insira sua chave PIX');
                 hasError = true;
@@ -1801,27 +1744,17 @@
                 showError('withdrawalAmount', 'Valor mínimo é R$10,00');
                 hasError = true;
             }
-
-            const totalBalance = state.currentUser.balance;
+            const approvedTasks = state.userTasks.filter(t => t.status === 'approved');
+            const totalFromTasks = approvedTasks.reduce((sum, task) => sum + task.value, 0);
+            const totalBalance = totalFromTasks + state.referralEarnings;
             if (withdrawalAmount > totalBalance) {
                 showError('withdrawalAmount', 'Saldo insuficiente');
                 hasError = true;
             }
-
             if (hasError) return;
-
             toggleSpinner('withdrawalSpinner', true);
-
-            // --- NOVA LÓGICA: Envia a solicitação de saque para o backend ---
-            apiRequest('/withdrawals', {
-                method: 'POST',
-                body: JSON.stringify({ amount: withdrawalAmount, pixKey })
-            })
-            .then(data => {
+            setTimeout(() => {
                 toggleSpinner('withdrawalSpinner', false);
-                showNotification('Saque solicitado! Será pago em até 48h.', 'success');
-
-                // Adiciona o saque ao histórico local (opcional, para UX imediato)
                 const newWithdrawal = {
                     id: state.nextWithdrawalId++,
                     date: new Date().toISOString(),
@@ -1831,15 +1764,10 @@
                 };
                 state.withdrawals.push(newWithdrawal);
                 saveState();
+                showNotification('Saque solicitado! Será pago em até 48h.', 'success');
                 renderWithdrawalsHistory();
-            })
-            .catch(error => {
-                toggleSpinner('withdrawalSpinner', false);
-                console.error('Erro ao solicitar saque:', error);
-                showNotification('Erro ao solicitar saque. Tente novamente.', 'error');
-            });
+            }, 2000);
         }
-
         // ==================================================
         // FUNÇÕES AUXILIARES
         // ==================================================
@@ -1854,7 +1782,6 @@
                 fieldElement.classList.add('error');
             }
         }
-
         function clearErrors() {
             document.querySelectorAll('.error-message').forEach(el => {
                 el.style.display = 'none';
@@ -1863,7 +1790,6 @@
                 el.classList.remove('error');
             });
         }
-
         function renderPage(page) {
             switch(page) {
                 case 'home':
@@ -1891,7 +1817,6 @@
                     renderHomePage();
             }
         }
-
         // --- INÍCIO DA NOVA FUNÇÃO: Página de Verificação de E-mail ---
         function showEmailVerificationPage(email) {
             document.title = "Taskin - Verifique seu E-mail";
@@ -1914,34 +1839,27 @@
                 </div>
             `;
             document.getElementById('mainContent').innerHTML = html;
-
             document.getElementById('verificationForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const code = document.getElementById('verificationCode').value.trim();
-
                 if (!code || code.length !== 6) {
                     showError('verificationCode', 'Por favor, insira um código de 6 dígitos.');
                     return;
                 }
-
                 const verifyBtn = document.getElementById('verifyBtn');
                 const originalText = verifyBtn.textContent;
                 verifyBtn.disabled = true;
                 verifyBtn.textContent = 'Verificando...';
-
                 try {
                     const response = await fetch(`${API_BASE_URL}/verify-email`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ email, token: code })
                     });
-
                     const data = await response.json();
-
                     if (!response.ok) {
                         throw new Error(data.error || 'Falha na verificação.');
                     }
-
                     showNotification('E-mail verificado com sucesso! Você já pode fazer login.', 'success');
                     setTimeout(() => {
                         state.currentPage = 'login';
@@ -1955,7 +1873,6 @@
                     verifyBtn.textContent = originalText;
                 }
             });
-
             document.getElementById('resendCodeLink').addEventListener('click', async function(e) {
                 e.preventDefault();
                 try {
@@ -1964,87 +1881,47 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ email })
                     });
-
                     const data = await response.json();
-
                     if (!response.ok) {
                         throw new Error(data.error || 'Falha ao reenviar o código.');
                     }
-
                     showNotification('Novo código enviado com sucesso! Verifique sua caixa de entrada.', 'success');
                 } catch (error) {
                     console.error('Erro ao reenviar token:', error);
                     showNotification(error.message, 'error');
                 }
             });
-
             updateHeaderUI();
         }
         // --- FIM DA NOVA FUNÇÃO ---
-
         // ==================================================
         // INICIALIZAÇÃO
         // ==================================================
         document.addEventListener('DOMContentLoaded', function() {
             // --- PROCESSA A INDICAÇÃO AO CARREGAR A PÁGINA ---
             processReferral();
-
             // Carrega estado salvo
             loadState();
-
-            // Tenta carregar o token JWT do localStorage
-            const token = getAuthToken();
-            if (token) {
-                // Se houver token, tenta carregar os dados do usuário
-                apiRequest('/users/me')
-                    .then(userData => {
-                        state.currentUser = {
-                            id: userData.id,
-                            name: userData.name,
-                            email: userData.email,
-                            whatsapp: userData.whatsapp,
-                            balance: userData.balance
-                        };
-                        state.currentPage = 'dashboard';
-                        renderUserArea();
-                    })
-                    .catch(error => {
-                        console.error('Token inválido ou expirado:', error);
-                        clearAuthToken();
-                        state.currentUser = null;
-                        state.currentPage = 'home';
-                        renderHomePage();
-                    });
-            } else {
-                state.currentPage = 'home';
-                renderHomePage();
-            }
-
             // Elementos do menu mobile
             const mobileMenuBtn = document.getElementById('mobileMenuBtn');
             const mobileMenu = document.getElementById('mobileMenu');
             const mobileMenuClose = document.getElementById('mobileMenuClose');
             const menuOverlay = document.getElementById('menuOverlay');
             const mobileLogout = document.getElementById('mobileLogout');
-
             // Fecha menu mobile
             function closeMobileMenu() {
                 mobileMenu.classList.remove('active');
                 menuOverlay.classList.remove('active');
             }
-
             // Abre menu mobile
             mobileMenuBtn.addEventListener('click', function() {
                 mobileMenu.classList.add('active');
                 menuOverlay.classList.add('active');
             });
-
             // Fecha menu mobile ao clicar no X
             mobileMenuClose.addEventListener('click', closeMobileMenu);
-
             // Fecha menu mobile ao clicar no overlay
             menuOverlay.addEventListener('click', closeMobileMenu);
-
             // Fecha menu mobile ao clicar em um item
             document.querySelectorAll('.mobile-menu-item').forEach(item => {
                 item.addEventListener('click', function(e) {
@@ -2060,27 +1937,22 @@
                     closeMobileMenu();
                 });
             });
-
             // Configura eventos dos links do footer
             document.getElementById('termsLink').addEventListener('click', function(e) {
                 e.preventDefault();
                 showNotification('Termos de uso: Nossos termos estão disponíveis em nosso site.', 'info');
             });
-
             document.getElementById('privacyLink').addEventListener('click', function(e) {
                 e.preventDefault();
                 showNotification('Política de privacidade: Valorizamos sua privacidade e dados.', 'info');
             });
-
             // Configura eventos dos modais
             document.getElementById('closeModal').addEventListener('click', function() {
                 document.getElementById('taskModal').style.display = 'none';
             });
-
             document.getElementById('closeProofModal').addEventListener('click', function() {
                 document.getElementById('proofModal').style.display = 'none';
             });
-
             // Fecha modais ao clicar fora
             window.addEventListener('click', function(e) {
                 const taskModal = document.getElementById('taskModal');
@@ -2088,7 +1960,14 @@
                 if (e.target === taskModal) taskModal.style.display = 'none';
                 if (e.target === proofModal) proofModal.style.display = 'none';
             });
-
+            // Renderiza página inicial
+            if (state.currentUser) {
+                state.currentPage = 'dashboard';
+                renderUserArea();
+            } else {
+                state.currentPage = 'home';
+                renderHomePage();
+            }
             console.log('Site Taskin inicializado com sucesso!');
         });
     </script>
